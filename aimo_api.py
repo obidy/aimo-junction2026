@@ -14,7 +14,7 @@ import secrets
 import sqlite3
 import threading
 from types import SimpleNamespace
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Optional
 import uuid
 
 from fastapi import Depends, FastAPI, HTTPException, Query
