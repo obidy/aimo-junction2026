@@ -44,9 +44,8 @@ def dashboard():
 def setting(name, default=""):
     return os.environ.get(name, default).strip()
 
-
 def role(credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(bearer)]):
-        agent, reviewer = setting("AIMO_AGENT_TOKEN"), setting("AIMO_REVIEWER_TOKEN")
+    agent, reviewer = setting("AIMO_AGENT_TOKEN"), setting("AIMO_REVIEWER_TOKEN")
     if not agent or not reviewer or agent == reviewer:
         raise HTTPException(503, "Configure distinct AIMO_AGENT_TOKEN and AIMO_REVIEWER_TOKEN values.")
     if credentials and hmac.compare_digest(credentials.credentials, reviewer):
@@ -54,7 +53,6 @@ def role(credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(
     if credentials and hmac.compare_digest(credentials.credentials, agent):
         return "agent"
     raise HTTPException(401, "A valid local gateway Bearer token is required.", headers={"WWW-Authenticate": "Bearer"})
-
 
 def can_review(identity: Annotated[str, Depends(role)]):
     if identity != "reviewer":
