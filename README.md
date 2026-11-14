@@ -1,5 +1,97 @@
 # Trusted Trade Agents — local purchasing API
 
+## Recipe requests (v0.4)
+
+Use **Plan a meal** to enter a request such as “Spaghetti bolognese for 200 people”.
+Enter **200** in the portions field (this is the authoritative scaling count), choose
+a delivery date and select review-first or automatic mode. The agent searches
+the web for a published recipe, extracts its source yield and ingredients,
+scales the quantities in Python and matches ingredients to catalogue products.
+Fixed mock prices and availability produce ONE combined basket.
+
+### Configure recipe AI in the SERVER PowerShell terminal
+
+Stop the gateway with Ctrl+C. Keep AIMO_API_KEY set to the working Valio mock key.
+Add a separate model-provider key and a Responses model that supports both web
+search and structured outputs:
+
+```powershell
+$env:LLM_API_KEY = "YOUR_ACTUAL_MODEL_PROVIDER_KEY"
+$env:LLM_MODEL = "YOUR_RESPONSES_WEB_SEARCH_CAPABLE_MODEL"
+python aimo_api.py
+```
+
+The Valio API key authenticates supplier lookups; it cannot run the recipe model.
+Keep model credentials on the server. No key is sent to the browser.
+The default provider URL is https://api.openai.com/v1. If you already use a
+Chat Completions-only LLM_BASE_URL/model, set RECIPE_BASE_URL and RECIPE_MODEL
+separately to a provider/model supporting Responses + web_search + JSON schema.
+The app reports configuration errors and never substitutes a canned recipe.
+This feature makes provider calls when requested; provider usage charges may apply.
+
+Reconnect using the current reviewer token, then **Plan a meal**. Review the
+source link, scaled quantities, selected products, pack counts and combined total.
+**Approve whole recipe & mock-order** creates a local mock receipt after fresh
+validation. Nothing is submitted to Valio. Recent meal plans are saved in the
+same SQLite database and remain accessible from this dialog.
+
+### Autonomy and external agents
+
+Review-first is the default. A reviewer may choose automatic mode for a request.
+For agent-token requests, the buyer must explicitly configure this in the server:
+
+```powershell
+$env:AIMO_RECIPE_AUTONOMY = "automatic"
+```
+
+The configured AIMO_APPROVAL_LIMIT applies to the **combined product subtotal
+INCLUDING tax**, never to each ingredient separately. Automatic mock commitment
+requires all required ingredients resolved, eligible current offers, no flagged
+recipe/match uncertainty and a subtotal within that limit. Free-text preferences
+force review; they are not a certified allergy or nutrition rule engine.
+Server AIMO_REQUIRED_CLAIMS and AIMO_REQUIRED_ORIGIN still apply to every product.
+A restaurant can review or edit ingredient quantities; a cafeteria can delegate
+the recipe choice within this authority.
+
+External-agent example (separate PowerShell terminal, actual running agent token):
+
+```powershell
+$env:AIMO_AGENT_TOKEN = "ACTUAL_TOKEN_FROM_RUNNING_SERVER"
+python recipe_client.py "Spaghetti bolognese for 200 people" --portions 200 --date 2026-11-16
+# Add --automatic only when the buyer has enabled recipe autonomy on the server.
+```
+
+Structured endpoints: GET /recipe-capabilities; POST/GET /recipe-plans;
+GET /recipe-plans/{id}; POST /recipe-plans/{id}/approve-and-commit (reviewer);
+POST /recipe-plans/{id}/commit (already authorised);
+POST /recipe-plans/{id}/rebuild (reviewer-supplied total quantities).
+The generated OpenAPI contract documents request and response schemas.
+Decision requests require the exact saved fingerprint. Rebuild makes a new plan,
+preserving the old evidence. Quotes expire after 30 minutes. Commitment refreshes
+prices/stock, rejects commercial changes and is idempotent for the plan.
+
+### Honest limits and corrections
+
+Missing yield, quantities such as “to taste”, unverified piece counts, unsuitable
+matches or unavailable products block the WHOLE basket. Reviewers can supply
+explicit total KG/L quantities in the ingredient cards and rebuild. Catalogue ST
+means a packaging unit and does not prove one individual onion or egg. No weight
+is guessed from a name or from gross shipping weight. Optional ingredients are
+listed but excluded explicitly. Kitchen inventory is not connected, so all
+required ingredients are assumed needed.
+
+The agent uses a sourced recipe but its extraction and matching remain model
+judgements; URLs are checked against returned search sources, not independently
+certified. The cheapest eligible SKU is selected among up to five model-matched
+options from the first 20 lexical/convertible catalogue candidates per ingredient.
+This is not a global basket optimiser. Delivery charges/deposits are excluded.
+No nutrition/school-meal compliance is asserted.
+
+Offline tests use synthetic provider/search responses and mocked supplier calls.
+A real model-provider request has not been tested without your configured key.
+Run `python -m unittest test_api test_recipe_agent` for the regression checks.
+
+
 ## Reviewer dashboard (new)
 
 Open **http://127.0.0.1:8000/** after starting `python aimo_api.py`.

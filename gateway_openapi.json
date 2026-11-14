@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Trusted Trade Agents",
-    "description": "Local demo: static search \u2192 fixed-price offers \u2192 order proposals \u2192 reviewer approval. Catalogue-wide product requests in sales units, litres or kilograms. No orders are sent to Valio Aimo.",
-    "version": "0.3.1"
+    "description": "Local demo: static search → fixed-price offers → order proposals → reviewer approval. Catalogue-wide product requests in sales units, litres or kilograms. No orders are sent to Valio Aimo.",
+    "version": "0.4.0"
   },
   "paths": {
     "/session": {
@@ -643,6 +643,301 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProposalView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe-capabilities": {
+      "get": {
+        "summary": "Capabilities",
+        "operationId": "recipe_capabilities",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/recipe-plans": {
+      "get": {
+        "summary": "List Plans",
+        "operationId": "list_recipe_plans",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RecipePlanView"
+                  },
+                  "type": "array",
+                  "title": "Response List Recipe Plans"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Plan",
+        "operationId": "plan_recipe_purchase",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipePlanView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/recipe-plans/{pid}": {
+      "get": {
+        "summary": "Get Plan",
+        "operationId": "get_recipe_plan",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipePlanView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe-plans/{pid}/approve-and-commit": {
+      "post": {
+        "summary": "Approve",
+        "operationId": "approve_recipe_and_commit",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeDecision"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipePlanView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe-plans/{pid}/commit": {
+      "post": {
+        "summary": "Auto Commit",
+        "operationId": "commit_authorised_recipe",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeDecision"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipePlanView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe-plans/{pid}/rebuild": {
+      "post": {
+        "summary": "Rebuild",
+        "operationId": "clarify_recipe_quantities",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeEdits"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipePlanView"
                 }
               }
             }
@@ -1768,6 +2063,293 @@
         ],
         "title": "ProposalView"
       },
+      "RecipeDecision": {
+        "properties": {
+          "fingerprint": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 64,
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Fingerprint"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fingerprint"
+        ],
+        "title": "RecipeDecision"
+      },
+      "RecipeEdits": {
+        "properties": {
+          "fingerprint": {
+            "type": "string",
+            "title": "Fingerprint"
+          },
+          "quantities": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeQuantityEdit"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Quantities"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fingerprint",
+          "quantities"
+        ],
+        "title": "RecipeEdits"
+      },
+      "RecipePlanView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "customer": {
+            "type": "string",
+            "title": "Customer"
+          },
+          "request": {
+            "type": "string",
+            "title": "Request"
+          },
+          "portions": {
+            "type": "integer",
+            "title": "Portions"
+          },
+          "delivery_date": {
+            "type": "string",
+            "title": "Delivery Date"
+          },
+          "recipe": {
+            "$ref": "#/components/schemas/SourcedRecipe"
+          },
+          "sources": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "ingredients": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Ingredients"
+          },
+          "order_lines": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Order Lines"
+          },
+          "total_net_eur": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Net Eur"
+          },
+          "total_gross_eur": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Gross Eur"
+          },
+          "approval_limit_eur": {
+            "type": "string",
+            "title": "Approval Limit Eur"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Issues"
+          },
+          "notices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notices"
+          },
+          "fingerprint": {
+            "type": "string",
+            "title": "Fingerprint"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          },
+          "expired": {
+            "type": "boolean",
+            "title": "Expired"
+          },
+          "events": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "mock_order": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mock Order"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer",
+          "request",
+          "portions",
+          "delivery_date",
+          "recipe",
+          "sources",
+          "ingredients",
+          "order_lines",
+          "total_net_eur",
+          "total_gross_eur",
+          "approval_limit_eur",
+          "status",
+          "issues",
+          "notices",
+          "fingerprint",
+          "created_at",
+          "expires_at",
+          "expired",
+          "events",
+          "mock_order"
+        ],
+        "title": "RecipePlanView"
+      },
+      "RecipeQuantityEdit": {
+        "properties": {
+          "ingredient_id": {
+            "type": "string",
+            "title": "Ingredient Id"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,6}|(?=[\\d.]{1,13}0*$)\\d{0,6}\\.\\d{0,6}0*$)"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "KG",
+              "L",
+              "PIECE"
+            ],
+            "title": "Unit"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ingredient_id",
+          "quantity",
+          "unit"
+        ],
+        "title": "RecipeQuantityEdit"
+      },
+      "RecipeRequest": {
+        "properties": {
+          "request": {
+            "type": "string",
+            "maxLength": 1500,
+            "minLength": 3,
+            "title": "Request",
+            "description": "E.g. spaghetti bolognese for 200 people"
+          },
+          "portions": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 1.0,
+            "title": "Portions",
+            "default": 200
+          },
+          "delivery_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Delivery Date"
+          },
+          "preferences": {
+            "type": "string",
+            "maxLength": 600,
+            "title": "Preferences",
+            "default": ""
+          },
+          "autonomy": {
+            "type": "string",
+            "enum": [
+              "review",
+              "automatic"
+            ],
+            "title": "Autonomy",
+            "default": "review"
+          },
+          "auto_commit": {
+            "type": "boolean",
+            "title": "Auto Commit",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request",
+          "delivery_date"
+        ],
+        "title": "RecipeRequest"
+      },
       "SearchSummary": {
         "properties": {
           "match_count": {
@@ -1850,6 +2432,125 @@
           "customer"
         ],
         "title": "SessionView"
+      },
+      "SourceIngredient": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "KG",
+              "L",
+              "PIECE",
+              "UNRESOLVED"
+            ],
+            "title": "Unit"
+          },
+          "original_measure": {
+            "type": "string",
+            "title": "Original Measure"
+          },
+          "search_terms": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Search Terms"
+          },
+          "optional": {
+            "type": "boolean",
+            "title": "Optional"
+          },
+          "uncertainty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "quantity",
+          "unit",
+          "original_measure",
+          "search_terms",
+          "optional",
+          "uncertainty"
+        ],
+        "title": "SourceIngredient"
+      },
+      "SourcedRecipe": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "source_title": {
+            "type": "string",
+            "title": "Source Title"
+          },
+          "source_servings": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Servings"
+          },
+          "ingredients": {
+            "items": {
+              "$ref": "#/components/schemas/SourceIngredient"
+            },
+            "type": "array",
+            "title": "Ingredients"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "source_url",
+          "source_title",
+          "source_servings",
+          "ingredients",
+          "notes"
+        ],
+        "title": "SourcedRecipe"
       },
       "ValidationError": {
         "properties": {

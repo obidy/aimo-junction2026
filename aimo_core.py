@@ -283,6 +283,10 @@ def quantity_per_sales_unit(product, unit, overrides):
         return litres_per_sales_unit(product, overrides)
     if unit == "SALES_UNIT":
         return Decimal(1), "requested in catalogue sales units"
+    if unit == "PIECE":
+        # ST is a catalogue packaging unit, not necessarily one egg/onion.
+        # Do not turn a count of bags/cartons into an ingredient piece count.
+        return None, "ingredient piece count is not verified; supply an explicit total in KG or L"
     if unit != "KG":
         return None, "unsupported requested unit"
     if product.get("synkkaData", {}).get("variableUnit"):

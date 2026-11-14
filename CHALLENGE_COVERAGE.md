@@ -65,3 +65,15 @@ simulated receipt is clearly labelled MOCK_ONLY/COMMITTED_MOCK. A pending
 proposal cannot be committed by the agent, fresh validation failures stop the
 commitment, and a unique proposal-to-order record prevents duplicate retries.
 This is not evidence of production integration or real delivery acceptance.
+
+
+## Recipe planning extension
+
+POST /recipe-plans accepts a meal request, target portions, delivery date and
+buyer-controlled autonomy. A Responses web-search model finds a cited recipe;
+structured extraction and catalogue-only semantic matching feed deterministic
+scaling, whole-pack calculation, live mock pricing/availability and combined
+spend decisions. One reviewer decision covers the entire recipe and basket.
+Unresolved required ingredients block partial commitment. Changes require a new
+plan and refreshed review. Receipts remain MOCK_ONLY, with no upstream submission.
+See README for required separate model credentials and prototype limitations.

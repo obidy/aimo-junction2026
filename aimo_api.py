@@ -27,7 +27,7 @@ import uvicorn
 import aimo_core as core
 
 ROOT = Path(__file__).resolve().parent
-app = FastAPI(title="Trusted Trade Agents", version="0.3.1",
+app = FastAPI(title="Trusted Trade Agents", version="0.4.0",
               description="Local demo: static search → fixed-price offers → order proposals → reviewer approval. "
                           "Catalogue-wide product requests in sales units, litres or kilograms. No orders are sent to Valio Aimo.")
 bearer = HTTPBearer(auto_error=False)
@@ -755,6 +755,10 @@ def approve(pid: str, request: DecisionRequest, identity: Annotated[str, Depends
 def reject(pid: str, request: DecisionRequest, identity: Annotated[str, Depends(can_review)]):
     return decision(pid, request, "REJECTED")
 
+
+import sys
+from recipe_agent import install_recipe_routes
+install_recipe_routes(app, sys.modules[__name__])
 
 if __name__ == "__main__":
     for name in ("AIMO_AGENT_TOKEN", "AIMO_REVIEWER_TOKEN"):
