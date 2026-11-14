@@ -1,0 +1,1902 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Trusted Trade Agents",
+    "description": "Local demo: static search \u2192 fixed-price offers \u2192 order proposals \u2192 reviewer approval. Catalogue-wide product requests in sales units, litres or kilograms. No orders are sent to Valio Aimo.",
+    "version": "0.3.1"
+  },
+  "paths": {
+    "/session": {
+      "get": {
+        "summary": "Session",
+        "operationId": "get_local_session",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policy": {
+      "get": {
+        "summary": "Get Policy",
+        "operationId": "get_policy",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyView"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "Products",
+        "operationId": "search_products",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100,
+              "default": "",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "lactose_free",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Lactose Free"
+            }
+          },
+          {
+            "name": "plain_milk",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Plain Milk"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers": {
+      "post": {
+        "summary": "Offers",
+        "operationId": "compare_product_offers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/proposals": {
+      "post": {
+        "summary": "Create Proposal",
+        "operationId": "create_purchase_proposal",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List Proposals",
+        "operationId": "list_proposals",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/proposals/{pid}": {
+      "get": {
+        "summary": "Get Proposal",
+        "operationId": "get_proposal",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/proposals/{pid}/alternatives": {
+      "get": {
+        "summary": "Proposal Alternatives",
+        "operationId": "get_proposal_alternatives",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlternativesView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/proposals/{pid}/order-draft": {
+      "get": {
+        "summary": "Order Draft",
+        "operationId": "get_structured_order_draft",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDraftView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "summary": "Commit Order",
+        "description": "Local simulated commitment only. Never calls a supplier order endpoint.",
+        "operationId": "commit_mock_order",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockOrderView"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Existing receipt returned for an idempotent retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockOrderView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List Orders",
+        "operationId": "list_mock_orders",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockOrderList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{oid}": {
+      "get": {
+        "summary": "Get Order",
+        "operationId": "get_mock_order",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "oid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Oid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockOrderView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/proposals/{pid}/approve": {
+      "post": {
+        "summary": "Approve",
+        "operationId": "approve_spending",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/proposals/{pid}/reject": {
+      "post": {
+        "summary": "Reject",
+        "operationId": "reject_spending",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlternativesView": {
+        "properties": {
+          "offer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offer Id"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/BasketView"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "expired": {
+            "type": "boolean",
+            "title": "Expired",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "offer_id",
+          "options",
+          "message"
+        ],
+        "title": "AlternativesView"
+      },
+      "BasketView": {
+        "properties": {
+          "sku": {
+            "type": "string",
+            "title": "Sku"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "sales_unit": {
+            "type": "string",
+            "title": "Sales Unit"
+          },
+          "requested_litres": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested Litres"
+          },
+          "requested_quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested Quantity"
+          },
+          "requested_unit": {
+            "type": "string",
+            "title": "Requested Unit",
+            "default": "L"
+          },
+          "provided_quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provided Quantity"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "litres": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Litres"
+          },
+          "net": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net"
+          },
+          "gross": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross"
+          },
+          "spend": {
+            "type": "string",
+            "title": "Spend"
+          },
+          "readiness": {
+            "type": "string",
+            "title": "Readiness"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "stock_status": {
+            "type": "string",
+            "title": "Stock Status",
+            "default": "UNKNOWN"
+          },
+          "rule_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Version"
+          },
+          "conversion_source": {
+            "type": "string",
+            "title": "Conversion Source"
+          },
+          "litres_per_sales_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Litres Per Sales Unit"
+          },
+          "quantity_per_sales_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity Per Sales Unit"
+          },
+          "required_claims": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Required Claims"
+          },
+          "required_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Origin"
+          },
+          "product_labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Product Labels"
+          },
+          "evidence": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Evidence"
+          },
+          "selection_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selection Reason"
+          },
+          "sales_unit_price_gross": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sales Unit Price Gross"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku",
+          "name",
+          "sales_unit",
+          "requested_litres",
+          "quantity",
+          "litres",
+          "net",
+          "gross",
+          "spend",
+          "readiness",
+          "reasons",
+          "conversion_source",
+          "litres_per_sales_unit"
+        ],
+        "title": "BasketView"
+      },
+      "DecisionRequest": {
+        "properties": {
+          "fingerprint": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 64,
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Fingerprint"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Note",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fingerprint"
+        ],
+        "title": "DecisionRequest"
+      },
+      "EventView": {
+        "properties": {
+          "at": {
+            "type": "string",
+            "title": "At"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "actor": {
+            "type": "string",
+            "title": "Actor"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          },
+          "snapshot_digest": {
+            "type": "string",
+            "title": "Snapshot Digest"
+          }
+        },
+        "type": "object",
+        "required": [
+          "at",
+          "action",
+          "actor",
+          "note",
+          "snapshot_digest"
+        ],
+        "title": "EventView"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MockOrderList": {
+        "properties": {
+          "orders": {
+            "items": {
+              "$ref": "#/components/schemas/MockOrderView"
+            },
+            "type": "array",
+            "title": "Orders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "orders"
+        ],
+        "title": "MockOrderList"
+      },
+      "MockOrderView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "proposal_id": {
+            "type": "string",
+            "title": "Proposal Id"
+          },
+          "customer": {
+            "type": "string",
+            "title": "Customer"
+          },
+          "committed_at": {
+            "type": "string",
+            "title": "Committed At"
+          },
+          "mode": {
+            "type": "string",
+            "const": "MOCK_ONLY",
+            "title": "Mode"
+          },
+          "status": {
+            "type": "string",
+            "const": "COMMITTED_MOCK",
+            "title": "Status"
+          },
+          "spending_status": {
+            "type": "string",
+            "title": "Spending Status"
+          },
+          "approved_fingerprint": {
+            "type": "string",
+            "title": "Approved Fingerprint"
+          },
+          "delivery_date": {
+            "type": "string",
+            "title": "Delivery Date"
+          },
+          "basket": {
+            "$ref": "#/components/schemas/BasketView"
+          },
+          "revalidated_evidence": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Revalidated Evidence"
+          },
+          "revalidated_stock_status": {
+            "type": "string",
+            "title": "Revalidated Stock Status"
+          },
+          "upstream_order_submitted": {
+            "type": "boolean",
+            "title": "Upstream Order Submitted"
+          },
+          "cost_scope": {
+            "type": "string",
+            "title": "Cost Scope"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "proposal_id",
+          "customer",
+          "committed_at",
+          "mode",
+          "status",
+          "spending_status",
+          "approved_fingerprint",
+          "delivery_date",
+          "basket",
+          "revalidated_evidence",
+          "revalidated_stock_status",
+          "upstream_order_submitted",
+          "cost_scope"
+        ],
+        "title": "MockOrderView"
+      },
+      "OfferRequest": {
+        "properties": {
+          "delivery_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Delivery Date"
+          },
+          "litres": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,9}|(?=[\\d.]{1,13}0*$)\\d{0,9}\\.\\d{0,3}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Litres",
+            "description": "Legacy milk request field; use quantity and unit for general products."
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,9}|(?=[\\d.]{1,13}0*$)\\d{0,9}\\.\\d{0,3}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "L",
+              "KG",
+              "SALES_UNIT"
+            ],
+            "title": "Unit",
+            "default": "L"
+          },
+          "query": {
+            "type": "string",
+            "maxLength": 120,
+            "title": "Query",
+            "default": ""
+          },
+          "plain_milk": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plain Milk"
+          },
+          "required_claims": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Required Claims"
+          },
+          "required_origin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Origin"
+          },
+          "product_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 20,
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Ids"
+          },
+          "scan_offset": {
+            "type": "integer",
+            "maximum": 20000.0,
+            "minimum": 0.0,
+            "title": "Scan Offset",
+            "description": "Continue a catalogue query at next_scan_offset; not used with explicit product_ids.",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "delivery_date"
+        ],
+        "title": "OfferRequest"
+      },
+      "OfferView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "customer": {
+            "type": "string",
+            "title": "Customer"
+          },
+          "delivery_date": {
+            "type": "string",
+            "title": "Delivery Date"
+          },
+          "litres": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Litres"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "default": "L"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": ""
+          },
+          "approval_limit": {
+            "type": "string",
+            "title": "Approval Limit"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/BasketView"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "search_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer",
+          "delivery_date",
+          "litres",
+          "approval_limit",
+          "created_at",
+          "expires_at",
+          "options"
+        ],
+        "title": "OfferView"
+      },
+      "OrderDraftLine": {
+        "properties": {
+          "sku": {
+            "type": "string",
+            "title": "Sku"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity"
+          },
+          "sales_unit": {
+            "type": "string",
+            "title": "Sales Unit"
+          },
+          "net_eur": {
+            "type": "string",
+            "title": "Net Eur"
+          },
+          "gross_eur": {
+            "type": "string",
+            "title": "Gross Eur"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku",
+          "name",
+          "quantity",
+          "sales_unit",
+          "net_eur",
+          "gross_eur"
+        ],
+        "title": "OrderDraftLine"
+      },
+      "OrderDraftView": {
+        "properties": {
+          "proposal_id": {
+            "type": "string",
+            "title": "Proposal Id"
+          },
+          "fingerprint": {
+            "type": "string",
+            "title": "Fingerprint"
+          },
+          "customer": {
+            "type": "string",
+            "title": "Customer"
+          },
+          "delivery_date": {
+            "type": "string",
+            "title": "Delivery Date"
+          },
+          "spending_status": {
+            "type": "string",
+            "title": "Spending Status"
+          },
+          "expired": {
+            "type": "boolean",
+            "title": "Expired"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/OrderDraftLine"
+            },
+            "type": "array",
+            "title": "Lines"
+          },
+          "excluded_costs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excluded Costs"
+          },
+          "evidence": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Evidence"
+          },
+          "stock_status": {
+            "type": "string",
+            "title": "Stock Status"
+          },
+          "order_submitted": {
+            "type": "boolean",
+            "title": "Order Submitted"
+          },
+          "requires_fresh_validation_before_any_real_submission": {
+            "type": "boolean",
+            "title": "Requires Fresh Validation Before Any Real Submission"
+          }
+        },
+        "type": "object",
+        "required": [
+          "proposal_id",
+          "fingerprint",
+          "customer",
+          "delivery_date",
+          "spending_status",
+          "expired",
+          "lines",
+          "excluded_costs",
+          "evidence",
+          "stock_status",
+          "order_submitted",
+          "requires_fresh_validation_before_any_real_submission"
+        ],
+        "title": "OrderDraftView"
+      },
+      "OrderRequest": {
+        "properties": {
+          "proposal_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Proposal Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "proposal_id"
+        ],
+        "title": "OrderRequest"
+      },
+      "PolicyView": {
+        "properties": {
+          "customer": {
+            "type": "string",
+            "title": "Customer"
+          },
+          "approval_limit_eur_including_tax": {
+            "type": "string",
+            "title": "Approval Limit Eur Including Tax"
+          },
+          "limit_basis": {
+            "type": "string",
+            "title": "Limit Basis"
+          },
+          "stock_unknown_orderable_at_or_above": {
+            "type": "string",
+            "title": "Stock Unknown Orderable At Or Above"
+          },
+          "rule_version": {
+            "type": "string",
+            "title": "Rule Version"
+          },
+          "order_submission_supported": {
+            "type": "boolean",
+            "title": "Order Submission Supported"
+          },
+          "mock_commit_supported": {
+            "type": "boolean",
+            "title": "Mock Commit Supported",
+            "default": true
+          },
+          "buyer_required_claims": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Buyer Required Claims"
+          },
+          "buyer_required_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Required Origin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customer",
+          "approval_limit_eur_including_tax",
+          "limit_basis",
+          "stock_unknown_orderable_at_or_above",
+          "rule_version",
+          "order_submission_supported"
+        ],
+        "title": "PolicyView"
+      },
+      "ProductList": {
+        "properties": {
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/ProductView"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          }
+        },
+        "type": "object",
+        "required": [
+          "products",
+          "limit",
+          "scope"
+        ],
+        "title": "ProductList"
+      },
+      "ProductView": {
+        "properties": {
+          "sku": {
+            "type": "string",
+            "title": "Sku"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "sales_unit": {
+            "type": "string",
+            "title": "Sales Unit"
+          },
+          "base_unit": {
+            "type": "string",
+            "title": "Base Unit"
+          },
+          "order_increment": {
+            "type": "string",
+            "title": "Order Increment"
+          },
+          "claims": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Claims"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Labels"
+          },
+          "supplier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier"
+          },
+          "country_of_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Of Origin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku",
+          "name",
+          "sales_unit",
+          "base_unit",
+          "order_increment",
+          "claims"
+        ],
+        "title": "ProductView"
+      },
+      "ProposalList": {
+        "properties": {
+          "proposals": {
+            "items": {
+              "$ref": "#/components/schemas/ProposalView"
+            },
+            "type": "array",
+            "title": "Proposals"
+          }
+        },
+        "type": "object",
+        "required": [
+          "proposals"
+        ],
+        "title": "ProposalList"
+      },
+      "ProposalRequest": {
+        "properties": {
+          "offer_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Offer Id"
+          },
+          "sku": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Sku"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "offer_id",
+          "sku"
+        ],
+        "title": "ProposalRequest"
+      },
+      "ProposalView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "fingerprint": {
+            "type": "string",
+            "title": "Fingerprint"
+          },
+          "customer": {
+            "type": "string",
+            "title": "Customer"
+          },
+          "delivery_date": {
+            "type": "string",
+            "title": "Delivery Date"
+          },
+          "basket": {
+            "$ref": "#/components/schemas/BasketView"
+          },
+          "policy": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Policy"
+          },
+          "spending_status": {
+            "type": "string",
+            "title": "Spending Status"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          },
+          "expired": {
+            "type": "boolean",
+            "title": "Expired"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/EventView"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "order_submitted": {
+            "type": "boolean",
+            "title": "Order Submitted"
+          },
+          "mock_order_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mock Order Id"
+          },
+          "commitment_status": {
+            "type": "string",
+            "title": "Commitment Status",
+            "default": "NOT_COMMITTED"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "fingerprint",
+          "customer",
+          "delivery_date",
+          "basket",
+          "policy",
+          "spending_status",
+          "created_at",
+          "expires_at",
+          "expired",
+          "events",
+          "order_submitted"
+        ],
+        "title": "ProposalView"
+      },
+      "SearchSummary": {
+        "properties": {
+          "match_count": {
+            "type": "integer",
+            "title": "Match Count"
+          },
+          "convertible_count": {
+            "type": "integer",
+            "title": "Convertible Count"
+          },
+          "missing_conversion_count": {
+            "type": "integer",
+            "title": "Missing Conversion Count"
+          },
+          "searchable_count": {
+            "type": "integer",
+            "title": "Searchable Count"
+          },
+          "checked_count": {
+            "type": "integer",
+            "title": "Checked Count"
+          },
+          "eligible_count": {
+            "type": "integer",
+            "title": "Eligible Count"
+          },
+          "scan_offset": {
+            "type": "integer",
+            "title": "Scan Offset"
+          },
+          "next_scan_offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Scan Offset"
+          },
+          "scan_limit": {
+            "type": "integer",
+            "title": "Scan Limit",
+            "default": 60
+          }
+        },
+        "type": "object",
+        "required": [
+          "match_count",
+          "convertible_count",
+          "missing_conversion_count",
+          "searchable_count",
+          "checked_count",
+          "eligible_count",
+          "scan_offset",
+          "next_scan_offset"
+        ],
+        "title": "SearchSummary"
+      },
+      "SessionView": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "reviewer_name": {
+            "type": "string",
+            "title": "Reviewer Name"
+          },
+          "customer": {
+            "type": "string",
+            "title": "Customer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "reviewer_name",
+          "customer"
+        ],
+        "title": "SessionView"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
