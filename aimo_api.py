@@ -45,8 +45,8 @@ def setting(name, default=""):
     return os.environ.get(name, default).strip()
 
 
-def role(credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)]):
-    agent, reviewer = setting("AIMO_AGENT_TOKEN"), setting("AIMO_REVIEWER_TOKEN")
+def role(credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(bearer)]):
+        agent, reviewer = setting("AIMO_AGENT_TOKEN"), setting("AIMO_REVIEWER_TOKEN")
     if not agent or not reviewer or agent == reviewer:
         raise HTTPException(503, "Configure distinct AIMO_AGENT_TOKEN and AIMO_REVIEWER_TOKEN values.")
     if credentials and hmac.compare_digest(credentials.credentials, reviewer):
